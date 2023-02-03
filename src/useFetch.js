@@ -2,14 +2,21 @@ import { useState, useEffect } from "react";
 
 export default function useFetch(url) {
   const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(url)
-      .then((response) => response.json())
-      .then((json) => {
-        return setData(json.results), console.log({ data });
-      })
-      .catch((err) => console.log(err.message));
+    try {
+      fetch(url)
+        .then((response) => response.json())
+        .then((json) => {
+          return setData(json.results);
+        });
+    } catch (err) {
+      return setError("We have an error");
+    } finally {
+      setLoading(false);
+    }
   }, [url]);
-  return { data };
+  return { data, error, loading };
 }
